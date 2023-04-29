@@ -10,16 +10,24 @@ class ChatScreen extends StatefulWidget {
   _ChatScreenState createState() => _ChatScreenState();
 }
 
-class _ChatScreenState extends State<ChatScreen> {
+class _ChatScreenState extends State<ChatScreen>
+    with AutomaticKeepAliveClientMixin<ChatScreen> {
   final TextEditingController _textController = TextEditingController();
+  final List<String> _messages = []; // メッセージを保持するリスト
   final SpeechToText _speech = SpeechToText();
 
+  @override
+  bool get wantKeepAlive => true;
+
   void _handleSpeechResult(String result) {
-    _textController.text = result;
+    setState(() {
+      _textController.text = result;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return PlatformScaffold(
       appBar: PlatformAppBar(
         title: const Text('GPT英会話 - チャット学習'),
@@ -28,10 +36,13 @@ class _ChatScreenState extends State<ChatScreen> {
         children: [
           Expanded(
             child: ListView.builder(
-              itemCount: 0, // Update this with the number of chat messages
+              reverse: true,
+              padding: const EdgeInsets.symmetric(vertical: 8.0),
+              itemCount: _messages
+                  .length, // Update this with the number of chat messages
               itemBuilder: (context, index) {
-                // Implement the chat message UI here
-                return Container();
+                return _buildMessageItem(_messages[
+                    index]); // Build the message UI with the message at index
               },
             ),
           ),
@@ -39,6 +50,27 @@ class _ChatScreenState extends State<ChatScreen> {
           Container(
             decoration: BoxDecoration(color: Theme.of(context).cardColor),
             child: _buildTextComposer(),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMessageItem(String message) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const CircleAvatar(
+            child: Text('U'),
+          ),
+          const SizedBox(width: 8.0),
+          Expanded(
+            child: Text(
+              message,
+              style: const TextStyle(fontSize: 16),
+            ),
           ),
         ],
       ),
@@ -80,6 +112,9 @@ class _ChatScreenState extends State<ChatScreen> {
 
   void _handleSubmitted(String text) {
     _textController.clear();
+    setState(() {
+      _messages.insert(0, text); // メッセージをリストに追加
+    });
     // Implement the logic to send the message and update the chat UI
   }
 
