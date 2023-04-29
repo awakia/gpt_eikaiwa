@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
+import 'package:gpt_eikaiwa/services/text_to_speech.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -23,6 +24,10 @@ class HomeScreen extends StatelessWidget {
                 padding: EdgeInsets.fromLTRB(16.0, 0, 16.0, 16.0),
                 child: AppDescription(),
               ),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16.0),
+                child: GreetButton(),
+              ),
             ],
           ),
         ),
@@ -39,6 +44,22 @@ class WelcomeMessage extends StatelessWidget {
     return const Text(
       'ようこそ、GPT英会話へ！',
       style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+    );
+  }
+}
+
+class GreetButton extends StatelessWidget {
+  const GreetButton({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return PlatformElevatedButton(
+      onPressed: () async {
+        TextToSpeech textToSpeech = TextToSpeech();
+        await textToSpeech.speakJa('こんにちは、Flutter TTS');
+        await textToSpeech.speakEn('Hello Flutter TTS');
+      },
+      child: const Text('挨拶する'),
     );
   }
 }
