@@ -37,6 +37,7 @@ dependencies:
   cupertino_icons: ^1.0.2
   flutter_platform_widgets: ^3.3.2
   speech_to_text: ^6.1.1
+  flutter_tts: ^3.6.3
 
 dev_dependencies:
   flutter_test:
