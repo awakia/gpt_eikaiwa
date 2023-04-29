@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:gpt_eikaiwa/services/speech_to_text.dart';
+import 'package:gpt_eikaiwa/services/text_to_speech.dart';
+import 'package:gpt_eikaiwa/services/chat_gpt.dart';
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen({Key? key}) : super(key: key);
@@ -13,8 +15,11 @@ class ChatScreen extends StatefulWidget {
 class _ChatScreenState extends State<ChatScreen>
     with AutomaticKeepAliveClientMixin<ChatScreen> {
   final TextEditingController _textController = TextEditingController();
+  final FocusNode _focusNode = FocusNode();
   final List<String> _messages = []; // メッセージを保持するリスト
   final SpeechToText _speech = SpeechToText();
+  final ChatGPT _chatGPT = ChatGPT(apiKey: 'your open api key');
+  final TextToSpeech _textToSpeech = TextToSpeech();
 
   @override
   bool get wantKeepAlive => true;
@@ -86,6 +91,7 @@ class _ChatScreenState extends State<ChatScreen>
             Flexible(
               child: TextField(
                 controller: _textController,
+                focusNode: _focusNode,
                 decoration:
                     const InputDecoration.collapsed(hintText: 'メッセージを入力してください'),
                 onSubmitted: _handleSubmitted,
@@ -110,11 +116,16 @@ class _ChatScreenState extends State<ChatScreen>
     );
   }
 
-  void _handleSubmitted(String text) {
+  void _handleSubmitted(String text) async {
     _textController.clear();
+    _focusNode.requestFocus();
+
+    String response = await _chatGPT.generateText(text);
     setState(() {
-      _messages.insert(0, text); // メッセージをリストに追加
+      _messages.insert(0, text);
+      _messages.insert(0, response);
     });
+    _textToSpeech.speakEn(response);
     // Implement the logic to send the message and update the chat UI
   }
 
@@ -130,6 +141,7 @@ class _ChatScreenState extends State<ChatScreen>
   @override
   void dispose() {
     _textController.dispose();
+    _focusNode.dispose();
     super.dispose();
   }
 }
