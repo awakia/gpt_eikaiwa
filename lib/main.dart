@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:gpt_eikaiwa/screens/home_screen.dart';
 import 'package:gpt_eikaiwa/screens/chat_screen.dart';
 import 'package:gpt_eikaiwa/screens/word_card_screen.dart';
@@ -15,24 +15,26 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       title: 'GPT英会話',
-      home: MyHomePage(),
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+      ),
+      home: const HomePage(),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key? key}) : super(key: key);
+class HomePage extends StatefulWidget {
+  const HomePage({Key? key}) : super(key: key);
 
   @override
-  _MyHomePageState createState() => _MyHomePageState();
+  _HomePageState createState() => _HomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  int _selectedIndex = 0;
-
-  final List<Widget> _widgetOptions = <Widget>[
+class _HomePageState extends State<HomePage> {
+  int _currentIndex = 0;
+  final List<Widget> _pages = [
     const HomeScreen(),
     const ChatScreen(),
     const WordCardScreen(),
@@ -42,73 +44,53 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void _onItemTapped(int index) {
     setState(() {
-      _selectedIndex = index;
+      _currentIndex = index;
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    final isMaterialPlatform =
-        Theme.of(context).platform == TargetPlatform.android;
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('英語学習アプリ'),
+      body: _pages[_currentIndex],
+      bottomNavigationBar: buildPlatformBottomNavigationBar(),
+    );
+  }
+
+  Widget buildPlatformBottomNavigationBar() {
+    return PlatformNavBar(
+      currentIndex: _currentIndex,
+      itemChanged: _onItemTapped,
+      items: const [
+        BottomNavigationBarItem(
+          icon: Icon(Icons.home),
+          label: 'ホーム',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.chat),
+          label: 'チャット',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.book),
+          label: '単語カード',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.show_chart),
+          label: '進捗',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.settings),
+          label: '設定',
+        ),
+      ],
+      material: (_, __) => MaterialNavBarData(
+        selectedItemColor: Colors.blue,
+        unselectedItemColor: Colors.grey,
+        backgroundColor: Colors.white,
       ),
-      body: _widgetOptions.elementAt(_selectedIndex),
-      bottomNavigationBar: isMaterialPlatform
-          ? BottomNavigationBar(
-              currentIndex: _selectedIndex,
-              items: const [
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.home),
-                  label: 'ホーム',
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.chat_bubble),
-                  label: 'チャット学習',
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.view_carousel),
-                  label: '単語カード',
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.bar_chart),
-                  label: '進捗状況',
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.settings),
-                  label: '設定',
-                ),
-              ],
-              selectedItemColor: Colors.amber[800],
-              onTap: _onItemTapped,
-            )
-          : CupertinoTabBar(
-              currentIndex: _selectedIndex,
-              items: const [
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.home),
-                  label: 'ホーム',
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.chat_bubble),
-                  label: 'チャット学習',
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.view_carousel),
-                  label: '単語カード',
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.bar_chart),
-                  label: '進捗状況',
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.settings),
-                  label: '設定',
-                ),
-              ],
-              onTap: _onItemTapped,
-            ),
+      cupertino: (_, __) => CupertinoTabBarData(
+        activeColor: Colors.blue,
+        backgroundColor: Colors.white,
+      ),
     );
   }
 }

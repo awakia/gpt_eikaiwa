@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 
 class WordCardScreen extends StatelessWidget {
   const WordCardScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('単語カード'),
+    return PlatformScaffold(
+      appBar: PlatformAppBar(
+        title: const Text('GPT英会話 - 単語カード'),
       ),
       body: ListView.builder(
         itemCount: 10, // Replace with the number of cards

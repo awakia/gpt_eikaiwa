@@ -1,23 +1,31 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: const [
-          Padding(
-            padding: EdgeInsets.all(16.0),
-            child: WelcomeMessage(),
+    return PlatformScaffold(
+      appBar: PlatformAppBar(
+        title: const Text('GPT英会話'),
+      ),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: const [
+              Padding(
+                padding: EdgeInsets.all(16.0),
+                child: WelcomeMessage(),
+              ),
+              Padding(
+                padding: EdgeInsets.fromLTRB(16.0, 0, 16.0, 16.0),
+                child: AppDescription(),
+              ),
+            ],
           ),
-          Padding(
-            padding: EdgeInsets.fromLTRB(16.0, 0, 16.0, 16.0),
-            child: AppDescription(),
-          ),
-        ],
+        ),
       ),
     );
   }
